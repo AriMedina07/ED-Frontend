@@ -15,5 +15,6 @@ module.exports = {
       '@typescript-eslint/no-non-null-assertion': 'off',
       'object-curly-spacing': ['error', 'always'],
       'no-console': 'warn',
+      'arrow-body-style': ['error', 'as-needed'],
    },
 };
