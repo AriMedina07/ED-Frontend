@@ -1,5 +1,6 @@
 import React from 'react';
 import { professorApi, studentApi } from './api';
+import './styles/global.scss';
 
 function App() {
    React.useEffect(() => {
