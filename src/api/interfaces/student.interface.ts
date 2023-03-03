@@ -1,5 +1,5 @@
 import { IStudent } from '../../interfaces/student';
 
-export abstract class StudentApi {
+export abstract class IStudentApi {
    abstract getStudents(): Promise<IStudent[]>;
 }

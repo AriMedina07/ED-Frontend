@@ -1,7 +1,7 @@
 import { IProfessor } from '../../interfaces/professor';
-import { ProfessorApi } from '../interfaces';
+import { IProfessorApi } from '../interfaces';
 
-export class AxiosProfessorApi extends ProfessorApi {
+export class AxiosProfessorApi extends IProfessorApi {
    getProfessors(): Promise<IProfessor[]> {
       console.log('pruebita itzel');
       return Promise.resolve([]);

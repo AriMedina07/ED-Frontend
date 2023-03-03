@@ -1,4 +1,3 @@
-//create a dummy component
 const OverallTable = () => (
    <div>
       <h1>Overall Table</h1>
