@@ -3,7 +3,8 @@ import { IProfessorApi } from '../interfaces';
 
 export class AxiosProfessorApi extends IProfessorApi {
    getProfessors(): Promise<IProfessor[]> {
-      console.log('pruebita itzel');
+      const text = 'pruebita ' + `itzel${1}`;
+      console.log(text);
       return Promise.resolve([]);
    }
 }
