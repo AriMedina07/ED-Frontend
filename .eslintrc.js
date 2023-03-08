@@ -1,6 +1,6 @@
 module.exports = {
    parser: '@typescript-eslint/parser',
-   plugins: ['@typescript-eslint'],
+   plugins: ['@typescript-eslint', 'react'],
    extends: ['prettier'],
    rules: {
       quotes: ['error', 'single'],
@@ -17,5 +17,6 @@ module.exports = {
       'no-console': 'warn',
       'arrow-body-style': ['error', 'as-needed'],
       'prefer-template': 'error',
+      'react/self-closing-comp': 'error',
    },
 };
