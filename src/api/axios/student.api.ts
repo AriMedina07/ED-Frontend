@@ -1,4 +1,4 @@
-import { IStudent } from '../../interfaces/student';
+import { IStudent } from '@/interfaces/student';
 import { IStudentApi } from '../interfaces';
 
 export class AxiosStudentApi extends IStudentApi {
