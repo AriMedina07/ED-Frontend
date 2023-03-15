@@ -1,11 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/global.scss';
+import Login from './components/shared/login/index';
 
 function App() {
    return (
       <BrowserRouter>
          <Routes>
             <Route path="/" element={<div>Inicio</div>} />
+            <Route path="/login" element={<Login />} />
             <Route
                path="/estudiante"
                element={<div>Hola soy un estudiante</div>}

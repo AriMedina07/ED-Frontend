@@ -1,7 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import GoogleLogin, {
+   GoogleLoginResponse,
+   GoogleLoginResponseOffline,
+} from 'react-google-login';
+import { googleConfig } from '../../../config/google';
+import { GoogleResponse } from '@/interfaces/login';
+
 import logo from './logo.png';
 
 const Login = () => {
+   const [userName, setUserName] = useState<string>();
+   const [userId, setUserId] = useState<RegExpMatchArray | null>();
+
+   const clientID =
+      '208713035832-2sfbs568pddgakc2is364vkio5u38813.apps.googleusercontent.com';
+
+   useEffect(() => {
+      googleConfig(clientID);
+   }, []);
+
+   const onSuccess = (
+      res: GoogleLoginResponse | GoogleLoginResponseOffline | GoogleResponse,
+   ) => {
+      setUserName('');
+      // const email = res.profileObj.email;
+      const id = email.match(/\d+/g);
+      setUserId(id);
+      console.log(res.code);
+   };
+
+   const onFailure = (res: any) => {
+      console.log(res);
+   };
+
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    //    const [error, setError] = useState(false);
@@ -50,13 +81,14 @@ const Login = () => {
                Iniciar sesión
             </button>
             <p className="my-2">ó</p>
-            <button
-               type="submit"
-               disabled={loading}
-               className="font-bold w-60 h-12 border-solid border border-black rounded-md"
-            >
-               Continuar con Google
-            </button>
+            <GoogleLogin
+               clientId={clientID}
+               onSuccess={onSuccess}
+               onFailure={onFailure}
+               cookiePolicy={'single_host_policy'}
+            />
+            {userName && <p>Nombre: {userName}</p>}
+            {userId && <p>Matrícula: {userId}</p>}
          </form>
       </div>
    );
