@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { IStudent } from '@/interfaces/student';
 
 export abstract class IStudentApi {
-   abstract getStudents(): Promise<IStudent[]>;
+   abstract getStudentsByGroup(idGroup: number): Promise<IStudent[]>;
 }
