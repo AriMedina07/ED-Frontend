@@ -1,16 +1,12 @@
 import { useState, useEffect } from 'react';
-import GoogleLogin, {
-   GoogleLoginResponse,
-   GoogleLoginResponseOffline,
-} from 'react-google-login';
+import GoogleLogin from 'react-google-login';
 import { googleConfig } from '../../../config/google';
-import { GoogleResponse } from '@/interfaces/login';
 
 import logo from './logo.png';
 
 const Login = () => {
-   const [userName, setUserName] = useState<string>();
-   const [userId, setUserId] = useState<RegExpMatchArray | null>();
+   const [userName, setUserName] = useState(null);
+   const [userId, setUserId] = useState(null);
 
    const clientID =
       '208713035832-2sfbs568pddgakc2is364vkio5u38813.apps.googleusercontent.com';
@@ -19,14 +15,12 @@ const Login = () => {
       googleConfig(clientID);
    }, []);
 
-   const onSuccess = (
-      res: GoogleLoginResponse | GoogleLoginResponseOffline | GoogleResponse,
-   ) => {
-      setUserName('');
-      // const email = res.profileObj.email;
+   const onSuccess = (res: any) => {
+      setUserName(res.profileObj.name);
+      const email = res.profileObj.email;
       const id = email.match(/\d+/g);
       setUserId(id);
-      console.log(res.code);
+      console.log(res);
    };
 
    const onFailure = (res: any) => {
