@@ -14,10 +14,7 @@ export abstract class IStudentApi {
       surveyData: ISurveyData,
    ): Promise<number | never[]>;
 
-   abstract getProfessorByStudent(
-      key: number,
-      idPeriod: number,
-   ): Promise<IProfessorStudent[]>;
+   abstract getProfessorByStudent(key: number): Promise<IProfessorStudent[]>;
 
    abstract getQuestionsByQuestionnaire(
       idQuestionnaire: number,

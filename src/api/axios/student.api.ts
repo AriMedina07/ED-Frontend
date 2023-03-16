@@ -49,12 +49,9 @@ export class AxiosStudentApi extends IStudentApi {
       return response;
    }
 
-   async getProfessorByStudent(
-      key: number,
-      idPeriod: number,
-   ): Promise<IProfessorStudent[]> {
+   async getProfessorByStudent(key: number): Promise<IProfessorStudent[]> {
       const response: IRawProfessorStudent[] = await axios
-         .post(`${API_URL}/student/professors/${key}`, { idPeriod })
+         .get(`${API_URL}/student/professors/${key}`)
          .then((res) => res.data)
          .catch((err) => {
             console.log(err);
