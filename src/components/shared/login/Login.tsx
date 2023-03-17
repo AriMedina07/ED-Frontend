@@ -1,26 +1,40 @@
 import { useState, useEffect } from 'react';
-import GoogleLogin from 'react-google-login';
-import { googleConfig } from '../../../config/google';
+import GoogleLogin, {
+   GoogleLoginResponse,
+   GoogleLoginResponseOffline,
+} from 'react-google-login';
+import { useNavigate } from 'react-router-dom';
 
+import { googleConfig } from '../../../config/google';
 import logo from './logo.png';
 
 const Login = () => {
-   const [userName, setUserName] = useState(null);
-   const [userId, setUserId] = useState(null);
-
    const clientID =
       '208713035832-2sfbs568pddgakc2is364vkio5u38813.apps.googleusercontent.com';
+   const navigate = useNavigate();
 
    useEffect(() => {
       googleConfig(clientID);
    }, []);
 
-   const onSuccess = (res: any) => {
-      setUserName(res.profileObj.name);
-      const email = res.profileObj.email;
-      const id = email.match(/\d+/g);
-      setUserId(id);
-      console.log(res);
+   const onSuccess = (
+      res: GoogleLoginResponse | GoogleLoginResponseOffline,
+   ) => {
+      if ('profileObj' in res) {
+         const name = res.profileObj.name;
+         const email = res.profileObj.email;
+         const key = email.match(/\d+/g)?.toString();
+         const student = {
+            name,
+            email,
+            key,
+         };
+         const studenJSON = JSON.stringify(student);
+         if (key?.length === 9) {
+            localStorage.setItem('student-data', studenJSON);
+            navigate('/estudiante');
+         }
+      }
    };
 
    const onFailure = (res: any) => {
@@ -59,6 +73,7 @@ const Login = () => {
                value={email}
                onChange={(e) => setEmail(e.target.value)}
                className="mt-24 pl-4 h-11 w-60 border-solid border border-black rounded-md"
+               autoComplete="username"
             />
             <input
                type="password"
@@ -66,6 +81,7 @@ const Login = () => {
                value={password}
                onChange={(e) => setPassword(e.target.value)}
                className="mt-8 mb-6 pl-4 h-11 w-60 border-solid border border-black rounded-md"
+               autoComplete="current-password"
             />
             <button
                type="submit"
@@ -81,8 +97,6 @@ const Login = () => {
                onFailure={onFailure}
                cookiePolicy={'single_host_policy'}
             />
-            {userName && <p>Nombre: {userName}</p>}
-            {userId && <p>Matrícula: {userId}</p>}
          </form>
       </div>
    );
