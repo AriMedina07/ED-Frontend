@@ -49,12 +49,9 @@ export class AxiosStudentApi extends IStudentApi {
       return response;
    }
 
-   async getProfessorByStudent(
-      key: number,
-      idPeriod: number,
-   ): Promise<IProfessorStudent[]> {
+   async getProfessorByStudent(key: number): Promise<IProfessorStudent[]> {
       const response: IRawProfessorStudent[] = await axios
-         .post(`${API_URL}/student/professors/${key}`, { idPeriod })
+         .get(`${API_URL}/student/professors/${key}`)
          .then((res) => res.data)
          .catch((err) => {
             console.log(err);
@@ -64,6 +61,7 @@ export class AxiosStudentApi extends IStudentApi {
       const professors: IProfessorStudent[] = response.map((professor) => ({
          idPeriod: professor.id_periodo,
          idCourse: professor.id_curso,
+         idSurvey: professor.id_encuesta,
          idSubject: professor.id_materia,
          subjectName: professor.nombre_materia,
          groupKey: professor.clave_grupo,
@@ -78,11 +76,9 @@ export class AxiosStudentApi extends IStudentApi {
       return professors;
    }
 
-   async getQuestionsByQuestionnaire(
-      idQuestionnaire: number,
-   ): Promise<IQuestionQuestionnaire[]> {
+   async getQuestionsByQuestionnaire(): Promise<IQuestionQuestionnaire[]> {
       const response: IRawIQuestionQuestionnaire[] = await axios
-         .get(`${API_URL}/student/survey/${idQuestionnaire}`)
+         .get(`${API_URL}/student/survey`)
          .then((res) => res.data)
          .catch((err) => {
             console.log(err);
