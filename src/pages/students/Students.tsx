@@ -1,7 +1,14 @@
-const Students = () => (
-   <div>
-      <h1>Students</h1>
-   </div>
+import React from 'react';
+import HeaderStudents from './Header';
+import TeachersList from './TeachersList';
+import FooterStudents from './FooterStudents';
+
+const AppStudents = () => (
+   <React.Fragment>
+      <HeaderStudents />
+      <TeachersList />
+      <FooterStudents />
+   </React.Fragment>
 );
 
-export default Students;
+export default AppStudents;
