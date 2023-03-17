@@ -31,6 +31,7 @@ interface IAnswer {
 export interface IRawProfessorStudent {
    id_periodo: number;
    id_curso: number;
+   id_encuesta: number;
    id_materia: number;
    nombre_materia: string;
    clave_grupo: string;
@@ -45,6 +46,7 @@ export interface IRawProfessorStudent {
 export type IProfessorStudent = {
    idPeriod: IRawProfessorStudent['id_periodo'];
    idCourse: IRawProfessorStudent['id_curso'];
+   idSurvey: IRawProfessorStudent['id_encuesta'];
    idSubject: IRawProfessorStudent['id_materia'];
    subjectName: IRawProfessorStudent['nombre_materia'];
    groupKey: IRawProfessorStudent['clave_grupo'];

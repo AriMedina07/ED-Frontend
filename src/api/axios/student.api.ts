@@ -61,6 +61,7 @@ export class AxiosStudentApi extends IStudentApi {
       const professors: IProfessorStudent[] = response.map((professor) => ({
          idPeriod: professor.id_periodo,
          idCourse: professor.id_curso,
+         idSurvey: professor.id_encuesta,
          idSubject: professor.id_materia,
          subjectName: professor.nombre_materia,
          groupKey: professor.clave_grupo,
