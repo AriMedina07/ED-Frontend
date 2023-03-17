@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+import {
+   IProfessorStudent,
+   IQuestionQuestionnaire,
+} from '@/interfaces/student';
+import React, { useState, useEffect } from 'react';
+import { studentApi } from '../../api/index';
+import logo from './logo.png';
 
 interface Materia {
    clave: string;
@@ -20,10 +26,13 @@ interface EvaluacionConfig {
 }
 
 const TeachersList = () => {
+   // eslint-disable-next-line no-unused-vars
    const [evaluaConf] = useState<EvaluacionConfig>({
       materias: [],
       preguntas: [],
    });
+   const [professors, setProfessors] = useState<IProfessorStudent[]>([]);
+   const [questions, setQuestions] = useState<IQuestionQuestionnaire[]>([]);
    const [materiaVista, setMateriaVista] = useState<Record<number, boolean>>(
       {},
    );
@@ -36,17 +45,22 @@ const TeachersList = () => {
       }));
    };
 
+   useEffect(() => {
+      (async () => {
+         setProfessors(await studentApi.getProfessorByStudent(202000074));
+         setQuestions(await studentApi.getQuestionsByQuestionnaire());
+      })();
+   }, []);
+
    return (
       <React.Fragment>
          <div className="w-full flex">
-            <div className="flex flex-col lg:flex-row w-full lg:justify-evenly bg-slate-50 rounded shadow-lg my-2">
-               {evaluaConf.materias.map((materia, key) => (
+            <div className="flex flex-col lg:flex-column w-full lg:justify-evenly bg-slate-50 rounded shadow-lg my-2">
+               {professors.map((professor, key: number) => (
                   <div
                      key={key}
                      className={`flex flex-col border rounded text-gray-800 p-2 my-5 mx-4 ${
-                        materia.status_encuesta
-                           ? 'border-poli'
-                           : 'border-upqroo'
+                        false ? 'border-poli' : 'border-upqroo'
                      }`}
                   >
                      <div className="w-full flex flex-col md:flex-row sm:items-center">
@@ -54,7 +68,7 @@ const TeachersList = () => {
                            <img
                               className="w-auto h-16"
                               alt="UPQROO logo"
-                              src="./logo.png"
+                              src={logo}
                            />
                         </div>
                         <div className="w-full lg:w-6/12 text-sm content-around flex">
@@ -64,7 +78,7 @@ const TeachersList = () => {
                                     Materia:
                                  </p>
                                  <p className="px-3 w-full text-upqroo">
-                                    {`${materia.materia} - [${materia.clave}]`}
+                                    {`${professor.subjectName} - [${professor.idProfessor}]`}
                                  </p>
                               </div>
                               <div className="w-full">
@@ -72,13 +86,13 @@ const TeachersList = () => {
                                     Docente:
                                  </p>
                                  <p className="px-3 w-full text-upqroo">
-                                    {`${materia.nombre} ${materia.apellido_paterno} ${materia.apellido_materno}`}
+                                    {`${professor.name} ${professor.paternalSurname} ${professor.maternalSurname}`}
                                  </p>
                               </div>
                            </div>
                         </div>
                         <div className="w-full lg:w-3/12 flex items-center my-4">
-                           {!materia.status_encuesta ? (
+                           {true ? (
                               <button
                                  className={`px-2 py-2 hover:bg-poli hover:text-white border rounded hover:border-poli w-full ${
                                     materiaVista[key]
@@ -103,52 +117,55 @@ const TeachersList = () => {
                                  Por favor, responde las siguientes preguntas:
                               </p>
                            </div>
-                           {evaluaConf.preguntas.map((pregunta) => (
+                           {questions.map((pregunta) => (
                               <div
-                                 key={pregunta.id}
+                                 key={pregunta.idQuestion}
                                  className="w-full px-3 py-2 border-b flex items-center justify-between"
                               >
                                  <p className="text-sm text-gray-800">
-                                    {`${pregunta.id}. ${pregunta.pregunta}`}
+                                    {`${pregunta.idQuestion}. ${pregunta.title}`}
                                  </p>
-                                 <select
-                                    className="w-32 h-8 text-gray-700 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-poli focus:ring-1 focus:ring-poli"
-                                    value={
-                                       respuestas[key] &&
-                                       respuestas[key][pregunta.id]
-                                          ? respuestas[key][
-                                               pregunta.id
-                                            ].toString()
-                                          : ''
-                                    }
-                                    onChange={(e) => {
-                                       const respuestaSeleccionada = parseInt(
-                                          e.target.value,
-                                       );
-                                       setRespuestas((prevRespuestas) => ({
-                                          ...prevRespuestas,
-                                          [key]: {
-                                             ...prevRespuestas[key],
-                                             [pregunta.id]:
-                                                respuestaSeleccionada,
-                                          },
-                                       }));
-                                    }}
-                                 >
-                                    <option value="" disabled>
-                                       Seleccione una respuesta
-                                    </option>
+                                 <div className="flex items-center">
                                     {[1, 2, 3, 4, 5].map((respuesta) => (
-                                       <option
+                                       <label
                                           key={respuesta}
-                                          value={respuesta}
+                                          className="inline-flex items-center mx-2"
                                        >
-                                          {respuesta}
-                                       </option>
+                                          <input
+                                             type="radio"
+                                             className="form-radio h-4 w-4 text-poli"
+                                             name={`pregunta${pregunta.idQuestion}`}
+                                             value={respuesta}
+                                             checked={
+                                                respuestas[key] &&
+                                                respuestas[key][
+                                                   pregunta.idQuestion
+                                                ] === respuesta
+                                             }
+                                             onChange={(e) => {
+                                                const respuestaSeleccionada =
+                                                   parseInt(e.target.value);
+                                                setRespuestas(
+                                                   (prevRespuestas) => ({
+                                                      ...prevRespuestas,
+                                                      [key]: {
+                                                         ...prevRespuestas[key],
+                                                         [pregunta.idQuestion]:
+                                                            respuestaSeleccionada,
+                                                      },
+                                                   }),
+                                                );
+                                             }}
+                                          />
+                                          <span className="ml-2 text-gray-700">
+                                             {respuesta}
+                                          </span>
+                                       </label>
                                     ))}
-                                 </select>
+                                 </div>
                               </div>
                            ))}
+
                            <div className="w-full flex justify-center my-2">
                               <button
                                  className="bg-poli text-white px-4 py-2 rounded-md hover:bg-poli-dark focus:outline-none focus:bg-poli-dark"
@@ -156,7 +173,7 @@ const TeachersList = () => {
                                     // Enviar respuestas
                                     console.log(
                                        'Respuestas enviadas para materia',
-                                       materia.clave,
+                                       professor.groupKey,
                                     );
                                     setMateriaVista((prevMateriaVista) => ({
                                        ...prevMateriaVista,
