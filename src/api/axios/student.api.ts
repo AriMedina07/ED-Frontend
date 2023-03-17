@@ -75,11 +75,9 @@ export class AxiosStudentApi extends IStudentApi {
       return professors;
    }
 
-   async getQuestionsByQuestionnaire(
-      idQuestionnaire: number,
-   ): Promise<IQuestionQuestionnaire[]> {
+   async getQuestionsByQuestionnaire(): Promise<IQuestionQuestionnaire[]> {
       const response: IRawIQuestionQuestionnaire[] = await axios
-         .get(`${API_URL}/student/survey/${idQuestionnaire}`)
+         .get(`${API_URL}/student/survey`)
          .then((res) => res.data)
          .catch((err) => {
             console.log(err);

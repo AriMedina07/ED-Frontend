@@ -16,7 +16,5 @@ export abstract class IStudentApi {
 
    abstract getProfessorByStudent(key: number): Promise<IProfessorStudent[]>;
 
-   abstract getQuestionsByQuestionnaire(
-      idQuestionnaire: number,
-   ): Promise<IQuestionQuestionnaire[]>;
+   abstract getQuestionsByQuestionnaire(): Promise<IQuestionQuestionnaire[]>;
 }
