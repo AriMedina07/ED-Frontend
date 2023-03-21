@@ -7,6 +7,8 @@ module.exports = {
          colors: {
             upqroo: '#4f2117',
             poli: '#fb730c',
+            polib: '#fd7108',
+            polibr: '#e90f02',
          },
       },
    },
