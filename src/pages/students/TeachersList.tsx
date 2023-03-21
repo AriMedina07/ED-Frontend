@@ -252,8 +252,8 @@ const TeachersList = () => {
                                              }),
                                           );
                                           // hacer la peticion para guardar las respuestas en la base de datos
-                                          // eslint-disable-next-line no-unused-vars
                                           const {
+                                             // eslint-disable-next-line no-unused-vars
                                              comentario,
                                              ...respuestasGuardadas
                                           } = respuestas[key];
