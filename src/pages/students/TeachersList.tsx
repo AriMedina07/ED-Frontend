@@ -38,12 +38,12 @@ const TeachersList = () => {
    );
    const [respuestas, setRespuestas] = useState<Record<number, number[]>>({});
 
-   const mostrarPreguntas = (key: number) => {
-      setMateriaVista((prevMateriaVista) => ({
-         ...prevMateriaVista,
-         [key]: true,
-      }));
-   };
+   // const mostrarPreguntas = (key: number) => {
+   //    setMateriaVista((prevMateriaVista) => ({
+   //       ...prevMateriaVista,
+   //       [key]: true,
+   //    }));
+   // };
 
    useEffect(() => {
       (async () => {
@@ -51,6 +51,131 @@ const TeachersList = () => {
          setQuestions(await studentApi.getQuestionsByQuestionnaire());
       })();
    }, []);
+
+   const handleSaveQuestions = async (professor: IProfessorStudent) => {
+      const lastData = localStorage.getItem('savedQuestions');
+      const savedQuestions = {
+         ...professor,
+         idStatus: 1,
+         respuestas: { ...respuestas },
+      };
+
+      if (lastData) {
+         const savedQuestionsArray = JSON.parse(lastData);
+         const existingProfessor = savedQuestionsArray.find(
+            (p: any) => p.professor.idProfessor === professor.idProfessor,
+         );
+
+         if (existingProfessor) {
+            existingProfessor.professor.respuestas = { ...respuestas };
+         } else {
+            savedQuestionsArray.push(savedQuestions);
+         }
+
+         localStorage.setItem(
+            'savedQuestions',
+            JSON.stringify(savedQuestionsArray),
+         );
+      } else {
+         localStorage.setItem(
+            'savedQuestions',
+            JSON.stringify([savedQuestions]),
+         );
+      }
+   };
+
+   const renderQuestionsForm = (professor: IProfessorStudent, key: number) => (
+      <>
+         <div className="min-w-full min-h-full backdrop-blur-md bg-white/30 top-0 left-0 right-0">
+            <div className="w-full h-auto py-8 lg:mt-8">
+               <div className="flex flex-col w-content h-auto md:w-8/12 border border-csc bg-white m-2 md:mx-auto rounded-lg justify-between">
+                  <div className="w-full px-3 my-2">
+                     <p className="text-m font-medium text-gray-800">
+                        Por favor, responde las siguientes preguntas:
+                     </p>
+                  </div>
+                  {questions.map((pregunta) => (
+                     <div
+                        key={pregunta.idQuestion}
+                        className="flex flex-col w-full p-2 border-b border-gray-400"
+                     >
+                        <div className="w-full flex flex-col md:flex-row pb-4 mx-4">
+                           <p className="text-m text-gray-800">
+                              {`${pregunta.idQuestion}. ${pregunta.title}`}
+                           </p>
+                        </div>
+                        <div className="flex items-center mx-auto mb-3">
+                           {valorRespuesta.map((respuesta) => (
+                              <label
+                                 key={respuesta.valor}
+                                 className="inline-flex items-center mx-5"
+                              >
+                                 <input
+                                    type="radio"
+                                    className="form-radio h-4 w-4 text-poli"
+                                    name={`pregunta${pregunta.idQuestion}`}
+                                    value={respuesta.valor}
+                                    checked={
+                                       respuestas[key] &&
+                                       respuestas[key][pregunta.idQuestion] ===
+                                          respuesta.valor
+                                    }
+                                    onChange={(e) => {
+                                       const respuestaSeleccionada = parseInt(
+                                          e.target.value,
+                                       );
+                                       setRespuestas((prevRespuestas) => ({
+                                          ...prevRespuestas,
+                                          [key]: {
+                                             ...prevRespuestas[key],
+                                             [pregunta.idQuestion]:
+                                                respuestaSeleccionada,
+                                          },
+                                       }));
+                                    }}
+                                 />
+                                 <span className="ml-2 text-m text-gray-700">
+                                    {`${respuesta.valor} - ${respuesta.texto}`}
+                                 </span>
+                              </label>
+                           ))}
+                        </div>
+                     </div>
+                  ))}
+
+                  <div className="w-full flex justify-center my-2">
+                     <button
+                        className="bg-poli text-white px-4 py-2 rounded-md hover:bg-poli-dark focus:outline-none focus:bg-poli-dark"
+                        onClick={async () => {
+                           // Enviar respuestas
+                           console.log(
+                              'Respuestas enviadas para materia',
+                              professor.groupKey,
+                           );
+                           setMateriaVista((prevMateriaVista) => ({
+                              ...prevMateriaVista,
+                              [key]: false,
+                           }));
+                           await handleSaveQuestions(professor);
+                        }}
+                     >
+                        Enviar
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </>
+   );
+
+   // eslint-disable-next-line no-unused-vars
+   const valorRespuesta = [
+      { valor: 1, texto: 'Malo' },
+      { valor: 2, texto: 'Deficiente' },
+      { valor: 3, texto: 'Regular' },
+      { valor: 4, texto: 'Bueno' },
+      { valor: 5, texto: 'Excelente' },
+   ];
 
    return (
       <React.Fragment>
@@ -99,7 +224,9 @@ const TeachersList = () => {
                                        ? 'bg-poli text-white border-poli'
                                        : 'text-upqroo border-upqroo'
                                  }`}
-                                 onClick={() => mostrarPreguntas(key)}
+                                 onClick={() =>
+                                    renderQuestionsForm(professor, key)
+                                 }
                               >
                                  Evaluar
                               </button>
@@ -110,82 +237,6 @@ const TeachersList = () => {
                            )}
                         </div>
                      </div>
-                     {materiaVista[key] && (
-                        <div className="w-full flex flex-col">
-                           <div className="w-full px-3 my-2">
-                              <p className="text-sm font-medium text-gray-800">
-                                 Por favor, responde las siguientes preguntas:
-                              </p>
-                           </div>
-                           {questions.map((pregunta) => (
-                              <div
-                                 key={pregunta.idQuestion}
-                                 className="w-full px-3 py-2 border-b flex items-center justify-between"
-                              >
-                                 <p className="text-sm text-gray-800">
-                                    {`${pregunta.idQuestion}. ${pregunta.title}`}
-                                 </p>
-                                 <div className="flex items-center">
-                                    {[1, 2, 3, 4, 5].map((respuesta) => (
-                                       <label
-                                          key={respuesta}
-                                          className="inline-flex items-center mx-2"
-                                       >
-                                          <input
-                                             type="radio"
-                                             className="form-radio h-4 w-4 text-poli"
-                                             name={`pregunta${pregunta.idQuestion}`}
-                                             value={respuesta}
-                                             checked={
-                                                respuestas[key] &&
-                                                respuestas[key][
-                                                   pregunta.idQuestion
-                                                ] === respuesta
-                                             }
-                                             onChange={(e) => {
-                                                const respuestaSeleccionada =
-                                                   parseInt(e.target.value);
-                                                setRespuestas(
-                                                   (prevRespuestas) => ({
-                                                      ...prevRespuestas,
-                                                      [key]: {
-                                                         ...prevRespuestas[key],
-                                                         [pregunta.idQuestion]:
-                                                            respuestaSeleccionada,
-                                                      },
-                                                   }),
-                                                );
-                                             }}
-                                          />
-                                          <span className="ml-2 text-gray-700">
-                                             {respuesta}
-                                          </span>
-                                       </label>
-                                    ))}
-                                 </div>
-                              </div>
-                           ))}
-
-                           <div className="w-full flex justify-center my-2">
-                              <button
-                                 className="bg-poli text-white px-4 py-2 rounded-md hover:bg-poli-dark focus:outline-none focus:bg-poli-dark"
-                                 onClick={() => {
-                                    // Enviar respuestas
-                                    console.log(
-                                       'Respuestas enviadas para materia',
-                                       professor.groupKey,
-                                    );
-                                    setMateriaVista((prevMateriaVista) => ({
-                                       ...prevMateriaVista,
-                                       [key]: false,
-                                    }));
-                                 }}
-                              >
-                                 Enviar
-                              </button>
-                           </div>
-                        </div>
-                     )}
                   </div>
                ))}
             </div>
