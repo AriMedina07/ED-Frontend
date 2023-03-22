@@ -21,6 +21,7 @@ export type IStudent = {
 export interface ISurveyData {
    answers: IAnswer[];
    survey_version: number;
+   comment: string | null;
 }
 
 interface IAnswer {
